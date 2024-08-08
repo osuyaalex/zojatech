@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "962302637077",
+    "project_id": "zojatech-a5cc0",
+    "storage_bucket": "zojatech-a5cc0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:962302637077:android:f00372d6da864018feca1c",
+        "android_client_info": {
+          "package_name": "com.osuyaalex.zojatech_assignment"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXpNZGElskzrawCP6uZSLBESYXoyakpX4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
