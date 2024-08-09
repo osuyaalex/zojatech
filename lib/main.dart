@@ -4,13 +4,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:zojatech_assignment/auth%20page/sign_in_page.dart';
-import 'package:zojatech_assignment/main_pages/home_page.dart';
+import 'package:provider/provider.dart';
+
+import 'Product Service/home_page.dart';
+import 'Provider/products.dart';
+import 'User Service/sign_in_page.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(const MyApp());
+  runApp( MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_){
+          return ProductProvider();
+        }),
+      ],
+  child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {

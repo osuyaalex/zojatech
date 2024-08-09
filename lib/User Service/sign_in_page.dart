@@ -1,12 +1,12 @@
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:zojatech_assignment/auth%20page/signup_page.dart';
-import 'package:zojatech_assignment/auth%20page/widgets/sign_in_textfields.dart';
+import 'package:zojatech_assignment/User%20Service/signup_page.dart';
+import 'package:zojatech_assignment/User%20Service/widgets/sign_in_textfields.dart';
 import 'package:zojatech_assignment/class/auth_service.dart';
-import 'package:zojatech_assignment/main_pages/home_page.dart';
 import 'package:zojatech_assignment/necessary%20widgets/spacing.dart';
 
+import '../Product Service/home_page.dart';
 import '../necessary widgets/elevated_button.dart';
 import '../necessary widgets/text_widget.dart';
 import 'forgot_password.dart';

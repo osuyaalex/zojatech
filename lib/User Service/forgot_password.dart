@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:zojatech_assignment/auth%20page/widgets/sign_in_textfields.dart';
+import 'package:zojatech_assignment/User%20Service/widgets/sign_in_textfields.dart';
 import 'package:zojatech_assignment/class/auth_service.dart';
 import 'package:zojatech_assignment/necessary%20widgets/spacing.dart';
 import 'package:zojatech_assignment/necessary%20widgets/text_widget.dart';

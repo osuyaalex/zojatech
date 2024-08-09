@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:zojatech_assignment/firebase_add.dart';
 
 class TransactionScreen extends StatelessWidget {
   const TransactionScreen({super.key});
@@ -9,16 +8,6 @@ class TransactionScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Transactions'),
-        actions: [
-          TextButton(
-              onPressed: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context){
-                  return Add();
-                }));
-              },
-              child: Text('data')
-          )
-        ],
       ),
       body: FutureBuilder<List<Transaction>>(
         future: TransactionService.fetchTransactions(),

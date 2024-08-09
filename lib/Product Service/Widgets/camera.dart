@@ -10,7 +10,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
 import 'package:image/image.dart' as img;
 import 'package:path_provider/path_provider.dart';
-import 'package:zojatech_assignment/main_pages/Widgets/image_cache.dart';
+
+import 'image_cache.dart';
 
 
 final ImagePicker _picker = ImagePicker();
