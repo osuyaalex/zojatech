@@ -1,16 +1,19 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:zojatech_assignment/Product%20Service/see_all_products.dart';
-import 'package:zojatech_assignment/Provider/products.dart';
-import 'package:zojatech_assignment/class/product_services.dart';
+import 'package:zojatech_assignment/Provider/cart_provider.dart';
+import 'package:zojatech_assignment/Provider/products_provider.dart';
+import 'package:zojatech_assignment/Screens/Product%20Service/product_details.dart';
+import 'package:zojatech_assignment/Screens/Product%20Service/see_all_products.dart';
+import 'package:zojatech_assignment/Services/get_firestore_data.dart';
+import 'package:zojatech_assignment/Services/product_services.dart';
+import 'package:zojatech_assignment/class/user_class.dart';
 import 'package:zojatech_assignment/necessary%20widgets/text_widget.dart';
 
-import '../Provider/product_list.dart';
-import '../class/json/product_json.dart';
-import '../necessary widgets/spacing.dart';
+import '../../Services/json/product_json.dart';
+import '../../class/product_class.dart';
+import '../../necessary widgets/spacing.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -20,41 +23,33 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
-  Map<String, dynamic> _data = {};
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  Users? _users;
   final ProductServices _productServices = ProductServices();
+  final GetFirestoreData _getFirestoreData = GetFirestoreData();
   List<Data>? _productList;
   late AnimationController _controller;
   Animation<int>? _animationInt;
   final String _profilePlaceholder = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR5wt2-sE3VgB3SwwpeW9QWKNvvN3JqOFlUSQ&s";
 
-  Future<void> _getUserData() async {
-    try {
-      DocumentSnapshot userDoc = await FirebaseFirestore.instance
-          .collection("Users")
-          .doc(_auth.currentUser!.uid)
-          .get();
 
-      if (userDoc.exists && userDoc.data() != null) {
-        setState(() {
-          _data = userDoc.data() as Map<String, dynamic>;
-        });
-        print(_data);
-      } else {
-        _data = {};
-      }
-
-    } catch (e) {
-      print('Error retrieving user track items: $e');
-    }
-  }
+Future _getUserData()async{
+  _getFirestoreData.getUserData().then((value){
+   if(mounted){
+     setState(() {
+       _users = value;
+     });
+   }
+  });
+}
 
   Future _getProducts()async{
     await _productServices.products(context).then((v){
       if(v.status == "success"){
-        setState(() {
-          _productList = v.data;
-        });
+        if(mounted){
+          setState(() {
+            _productList = v.data;
+          });
+        }
         print('dddddddddddddd$_productList');
       }
     });
@@ -62,13 +57,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
 
   _countNumbers(){
     if (_productList == null) return;
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500), // Adjust duration as needed
-    );
      _animationInt = IntTween(begin: 0, end: _productList?.length).animate(_controller)
        ..addListener(() {
-         setState(() {}); // Rebuild the widget with the new value
+        if(mounted){
+          setState(() {});
+        } // Rebuild the widget with the new value
        });
 
     _controller.forward();
@@ -84,8 +77,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
   void initState() {
     // TODO: implement initState
     super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500), // Adjust duration as needed
+    );
     _getUserData();
     _getProductNumber();
+    Provider.of<ProductProvider>(context, listen: false).loadProduct();
+    Provider.of<CartProvider>(context, listen: false).loadCart();
   }
 
   @override
@@ -135,7 +134,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
                           borderRadius: BorderRadius.circular(30),
                           image: DecorationImage(
                               image: NetworkImage(
-                                  _data['image'] ?? _profilePlaceholder),
+                                  _users?.image ?? _profilePlaceholder),
                               fit: BoxFit.fill
                           )
                       ),
@@ -144,7 +143,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
                 ),
                 const Space(height:15),
                 TextWidget(
-                  text: 'Hello, ${_data['firstName']??''}',
+                  text: 'Hello, ${_users?.firstName??''}',
                   fontSize: 30,
                   fontWeight:  FontWeight.w800,
                 ),
@@ -184,7 +183,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
                 _productList != null?Padding(
                   padding: const EdgeInsets.only(top: 14.0),
                   child: SizedBox(
-                    height: MediaQuery.of(context).size.height*0.35,
+                    height: MediaQuery.of(context).size.height*0.28,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: 4,
@@ -194,8 +193,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
                         }
                     ),
                   ),
-                ):const SizedBox(),
-                const Space( height: 25,),
+                ):const Center(
+                  child: CircularProgressIndicator(),
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -259,14 +259,35 @@ String formatNumberInDouble(String? number) {
 }
 
 Widget _builderContainer(Data? data, BuildContext context){
-  final productProvider = Provider.of<ProductProvider>(context, listen: false);
+  final productProvider = Provider.of<ProductProvider>(context);
+  final product = Product(
+      title:  data!.title!,
+      imagePath: data.imagePath!,
+      price: data.pricelists!.isNotEmpty?
+      data.pricelists![0].price!:'500',
+      description: data.description!,
+      genre: data.genre!
+
+  );
   return GestureDetector(
     onTap: (){
+      data.pricelists!.isNotEmpty?
       productProvider.addItem(
           data.title!,
-          'https://api.naijacp.com/naijacp/public/${data.imagePath!}',
-          data.pricelists?[0].price??'N/A'
+          data.imagePath!,
+          data.pricelists![0].price!,
+        data.description!,
+        data.genre!
+      ):productProvider.addItem(
+          data.title!,
+          data.imagePath!,
+          '500',
+          data.description!,
+          data.genre!
       );
+      Navigator.push(context, MaterialPageRoute(builder: (context){
+        return ProductDetails(details: product,);
+      }));
     },
     child: Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -279,7 +300,7 @@ Widget _builderContainer(Data? data, BuildContext context){
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(14),
               image: DecorationImage(
-                  image: NetworkImage('https://api.naijacp.com/naijacp/public/${data!.imagePath!}'),
+                  image: NetworkImage('https://api.naijacp.com/naijacp/public/${data.imagePath!}'),
                 fit: BoxFit.fill
               )
             ),
@@ -297,7 +318,7 @@ Widget _builderContainer(Data? data, BuildContext context){
                 data.pricelists!.isNotEmpty?TextWidget(
                     text: "\$ ${formatNumberInDouble(data.pricelists?[0].price!)}",
                 ):const TextWidget(
-                  text: 'N/A',
+                  text: '\$ 700',
                 )
               ],
             ),
@@ -312,7 +333,9 @@ Widget _builderContainer(Data? data, BuildContext context){
 Widget _providerContainer(Product product, BuildContext context){
   return GestureDetector(
     onTap: (){
-
+      Navigator.push(context, MaterialPageRoute(builder: (context){
+        return ProductDetails(details: product,);
+      }));
     },
     child: Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -325,7 +348,7 @@ Widget _providerContainer(Product product, BuildContext context){
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(14),
                 image: DecorationImage(
-                    image: NetworkImage(product.imageUrl),
+                    image: NetworkImage('https://api.naijacp.com/naijacp/public/${product.imagePath}'),
                     fit: BoxFit.fill
                 )
             ),
@@ -336,12 +359,10 @@ Widget _providerContainer(Product product, BuildContext context){
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TextWidget(
-                  text: product.name,
+                  text: product.title,
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
                 ),
-                product.price == 'N/A'?
-                    const TextWidget(text: 'N/A'):
                 TextWidget(
                   text: "\$ ${formatNumberInDouble(product.price)}",
                 )

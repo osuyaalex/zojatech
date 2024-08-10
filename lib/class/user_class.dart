@@ -1,24 +1,29 @@
-class User {
+class Users {
   final String uid;
   final String firstName;
   final String lastName;
   final String email;
-  // Optionally add additional fields as needed
+  final String? image; // Make image optional
+  final String? password; // Make password optional
 
-  User({
+  Users({
     required this.uid,
     required this.firstName,
     required this.lastName,
     required this.email,
+    this.image,
+    this.password,
   });
 
   // Factory constructor to create a User from a Map
-  factory User.fromMap(Map<String, dynamic> map) {
-    return User(
-      uid: map['uid'] ?? '',
+  factory Users.fromMap(Map<String, dynamic> map) {
+    return Users(
+      uid: map['uid'] ?? '', // Default empty string if uid is missing
       firstName: map['firstName'] ?? '',
       lastName: map['lastName'] ?? '',
       email: map['email'] ?? '',
+      image: map['image'], // Can be null
+      password: map['password'], // Can be null
     );
   }
 
@@ -29,6 +34,8 @@ class User {
       'firstName': firstName,
       'lastName': lastName,
       'email': email,
+      'image': image,
+      'password': password,
     };
   }
 }

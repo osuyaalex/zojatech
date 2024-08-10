@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:zojatech_assignment/Provider/product_list.dart';
+import 'package:zojatech_assignment/class/product_class.dart';
 
 class ProductProvider extends ChangeNotifier {
   final List<Product> _list = [];
@@ -12,7 +12,7 @@ class ProductProvider extends ChangeNotifier {
     return _list.length;
   }
 
-  Future<void> loadCart() async {
+  Future<void> loadProduct() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List<String>? savedItems = prefs.getStringList('cartItems');
 
@@ -23,7 +23,7 @@ class ProductProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> saveCart() async {
+  Future<void> saveProduct() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List<String> savedItems = _list.map((item) => jsonEncode(item.toJson())).toList();
 
@@ -34,8 +34,10 @@ class ProductProvider extends ChangeNotifier {
       String name,
       String imageUrl,
       String price,
+      String description,
+      String genre,
       ) {
-    final existingIndex = _list.indexWhere((item) => item.name == name);
+    final existingIndex = _list.indexWhere((item) => item.title == name);
 
     if (existingIndex != -1) {
       // Remove the existing item from its current position
@@ -47,22 +49,24 @@ class ProductProvider extends ChangeNotifier {
     } else {
       // Create a new item and add it to the top of the list
       final product = Product(
-        name: name,
-        imageUrl: imageUrl,
+        title: name,
+        imagePath: imageUrl,
         price: price,
+        description: description,
+        genre: genre
 
       );
       _list.insert(0, product);
     }
 
     notifyListeners();
-    saveCart();
+    saveProduct();
   }
 
   void clearCart() {
     _list.clear();
     notifyListeners();
-    saveCart();
+    saveProduct();
   }
 }
 

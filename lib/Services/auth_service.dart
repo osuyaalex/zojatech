@@ -17,6 +17,9 @@ class AuthService{
         "password":password,
         "image":null
       });
+      await firestore.collection('Transactions').doc(cred.user!.uid).set({
+        "transactions":[]
+      });
       return 'Account created successfully';
     }on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {

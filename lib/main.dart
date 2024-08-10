@@ -5,10 +5,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-
-import 'Product Service/home_page.dart';
-import 'Provider/products.dart';
-import 'User Service/sign_in_page.dart';
+import 'package:zojatech_assignment/Provider/cart_provider.dart';
+import 'Provider/products_provider.dart';
+import 'Screens/Product Service/home_page.dart';
+import 'Screens/User Service/sign_in_page.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,6 +17,9 @@ void main() async{
       providers: [
         ChangeNotifierProvider(create: (_){
           return ProductProvider();
+        }),
+        ChangeNotifierProvider(create: (_){
+          return CartProvider();
         }),
       ],
   child: const MyApp()));

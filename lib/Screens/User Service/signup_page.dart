@@ -1,16 +1,15 @@
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:zojatech_assignment/User%20Service/sign_in_page.dart';
-import 'package:zojatech_assignment/User%20Service/widgets/sign_in_textfields.dart';
-
-import 'package:zojatech_assignment/class/auth_service.dart';
+import 'package:zojatech_assignment/Screens/User%20Service/sign_in_page.dart';
+import 'package:zojatech_assignment/Screens/User%20Service/widgets/sign_in_textfields.dart';
+import 'package:zojatech_assignment/Services/auth_service.dart';
 import 'package:zojatech_assignment/necessary%20widgets/spacing.dart';
 import 'package:zojatech_assignment/necessary%20widgets/text_widget.dart';
 
+import '../../necessary widgets/elevated_button.dart';
+import '../../utilities/snackbar.dart';
 import '../Product Service/home_page.dart';
-import '../necessary widgets/elevated_button.dart';
-import '../utilities/snackbar.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
