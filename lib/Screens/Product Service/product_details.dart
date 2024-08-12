@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:zojatech_assignment/Provider/cart_provider.dart';
@@ -25,10 +23,13 @@ class _ProductDetailsState extends State<ProductDetails> {
   @override
   Widget build(BuildContext context) {
    final cartProvider = Provider.of<CartProvider>(context, listen: false);
-    return Scaffold(
+   Color transparent = Colors.transparent;
+   Color grey = Colors.grey;
+   double width = MediaQuery.of(context).size.width;
+   return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        shadowColor: Colors.transparent,
+        backgroundColor: transparent,
+        shadowColor: transparent,
         title: TextWidget(text: 'Details'),
         actions: [
           IconButtonWidget(
@@ -36,7 +37,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                 Navigator.push(context, MaterialPageRoute(builder: (context){
                   return const CartPage();
                 }));
-              }, icon: const Icon(Icons.shopping_cart, color: Colors.grey,)
+              }, icon: Icon(Icons.shopping_cart, color: grey,)
           )
         ],
       ),
@@ -98,8 +99,8 @@ class _ProductDetailsState extends State<ProductDetails> {
                        shortSnack(context, 'item successfully added to cart');
                       },
                       textColor: Colors.white,
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.width*0.14,
+                      width: width,
+                      height: width*0.14,
                       minSize: false,
                       textOrIndicator: false
                   ),

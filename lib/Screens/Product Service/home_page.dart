@@ -7,6 +7,7 @@ import 'package:zojatech_assignment/Provider/products_provider.dart';
 import 'package:zojatech_assignment/Screens/Product%20Service/product_details.dart';
 import 'package:zojatech_assignment/Screens/Product%20Service/see_all_products.dart';
 import 'package:zojatech_assignment/Screens/Product%20Service/see_all_tapped_products.dart';
+import 'package:zojatech_assignment/Services/auth_service.dart';
 import 'package:zojatech_assignment/Services/get_firestore_data.dart';
 import 'package:zojatech_assignment/Services/product_services.dart';
 import 'package:zojatech_assignment/class/user_class.dart';
@@ -17,6 +18,7 @@ import '../../class/product_class.dart';
 import '../../necessary widgets/icon_button_widget.dart';
 import '../../necessary widgets/spacing.dart';
 import '../Transaction Service/transaction_history.dart';
+import '../User Service/sign_in_page.dart';
 import 'cart.dart';
 
 class HomePage extends StatefulWidget {
@@ -33,6 +35,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
   List<Data>? _productList;
   late AnimationController _controller;
   Animation<int>? _animationInt;
+  AuthService _authService = AuthService();
 
 
 Future _getUserData()async{
@@ -76,6 +79,36 @@ Future _getUserData()async{
     _countNumbers();
   }
 
+  _signOutDialog(){
+    showDialog(
+        context: context,
+        builder: (context){
+          return AlertDialog(
+            title: const TextWidget(text: "Are You Sure?"),
+            content: const TextWidget(text: 'Are you sure you want to sign out of '
+                'this account?'),
+            actions: [
+              TextButton(
+                  onPressed: ()async{
+                    await _authService.logOut();
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context){
+                      return const SignInPage();
+                    }));
+                  },
+                  child: const TextWidget(text: "yes")
+              ),
+              TextButton(
+                  onPressed: (){
+                    Navigator.pop(context);
+                  },
+                  child: const TextWidget(text: "no")
+              ),
+            ],
+          );
+        }
+    );
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -104,10 +137,13 @@ Future _getUserData()async{
     if(_animationInt != null){
       productLength = numberFormat.format(_animationInt!.value);
     }
+    Color grey = Colors.grey;
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
+        height: height,
+        width: width,
         decoration:  BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
@@ -135,15 +171,23 @@ Future _getUserData()async{
                             return const TransactionHistory();
                           }));
                         },
-                        icon: Icon(Icons.history, color: Colors.grey,)
+                        icon: Icon(Icons.history, color:grey,)
                     ),
-                    IconButtonWidget(
-                        onPressed:(){
-                          Navigator.push(context, MaterialPageRoute(builder: (context){
-                            return const CartPage();
-                          }));
-                        }, icon: const Icon(Icons.shopping_cart, color: Colors.grey,)
-                    )
+                    Row(
+                      children: [
+                        IconButtonWidget(
+                            onPressed:(){
+                              Navigator.push(context, MaterialPageRoute(builder: (context){
+                                return const CartPage();
+                              }));
+                            }, icon: Icon(Icons.shopping_cart, color: grey,)
+                        ),
+                        GestureDetector(
+                          onTap: _signOutDialog,
+                            child: Icon(Icons.logout, color:grey,)
+                        )
+                      ],
+                    ),
                   ],
                 ),
                 const Space(height:15),
@@ -188,13 +232,13 @@ Future _getUserData()async{
                 _productList != null?Padding(
                   padding: const EdgeInsets.only(top: 14.0),
                   child: SizedBox(
-                    height: MediaQuery.of(context).size.height*0.25,
+                    height: height*0.25,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: 4,
                         itemBuilder: (context, index){
                         final data = _productList?[index];
-                        return _builderContainer(data, context);
+                        return _builderContainer(data,height,width, context);
                         }
                     ),
                   ),
@@ -237,7 +281,7 @@ Future _getUserData()async{
                                 itemCount: displayedItemCount,
                                 itemBuilder: (context, index){
                                   final product = productProvider.getItems[index];
-                                  return _providerContainer(product, context);
+                                  return _providerContainer(product,height,width, context);
                                 }
                             )
                           ],
@@ -263,7 +307,7 @@ String formatNumberInDouble(String? number) {
   return '';
 }
 
-Widget _builderContainer(Data? data, BuildContext context){
+Widget _builderContainer(Data? data,double height, double width, BuildContext context){
   final productProvider = Provider.of<ProductProvider>(context);
   final product = Product(
       title:  data!.title!,
@@ -300,8 +344,8 @@ Widget _builderContainer(Data? data, BuildContext context){
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: MediaQuery.of(context).size.width*0.7,
-            height: MediaQuery.of(context).size.height*0.18,
+            width: width*0.7,
+            height: height*0.18,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(14),
               image: DecorationImage(
@@ -335,7 +379,7 @@ Widget _builderContainer(Data? data, BuildContext context){
   );
 }
 
-Widget _providerContainer(Product product, BuildContext context){
+Widget _providerContainer(Product product,double height,double width, BuildContext context){
   return GestureDetector(
     onTap: (){
       Navigator.push(context, MaterialPageRoute(builder: (context){
@@ -348,8 +392,8 @@ Widget _providerContainer(Product product, BuildContext context){
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: MediaQuery.of(context).size.width*0.85,
-            height: MediaQuery.of(context).size.height*0.25,
+            width: width*0.85,
+            height: height*0.25,
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(14),
                 image: DecorationImage(
