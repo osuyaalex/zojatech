@@ -51,21 +51,21 @@ class CartProvider extends ChangeNotifier {
       _list.add(cart);
     }
     _updateItemNames();
-    _saveCart(); // Save cart after adding or updating an item
+    _saveCart();
     notifyListeners();
   }
 
   void increment(Cart cart) {
     cart.increase();
     _updateItemNames();
-    _saveCart(); // Save cart after incrementing an item
+    _saveCart();
     notifyListeners();
   }
 
   void decrement(Cart cart) {
     cart.decrease();
     _updateItemNames();
-    _saveCart(); // Save cart after decrementing an item
+    _saveCart();
     notifyListeners();
   }
 

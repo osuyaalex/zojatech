@@ -81,6 +81,7 @@ class _SignupPageState extends State<SignupPage> {
     });
   }
 
+
   @override
   void initState() {
     super.initState();
@@ -178,7 +179,7 @@ class _SignupPageState extends State<SignupPage> {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 4.0),
                   child: Button(
-                      buttonColor: Color(0xffD397F8),
+                      buttonColor: const Color(0xffD397F8),
                       text: 'Sign up my Account',
                       onPressed: ()async{
                         if(_key.currentState!.validate()){

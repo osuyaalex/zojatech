@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_grid_view.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_tile.dart';
+import 'package:zojatech_assignment/Screens/Product%20Service/product_details.dart';
 
 
 import '../../Provider/products_provider.dart';
 import '../../Services/json/product_json.dart';
 import '../../Services/product_services.dart';
+import '../../class/product_class.dart';
 import '../../necessary widgets/text_widget.dart';
 import 'home_page.dart';
 
@@ -39,6 +41,7 @@ class _SeeAllProductsState extends State<SeeAllProducts> {
   }
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -48,7 +51,7 @@ class _SeeAllProductsState extends State<SeeAllProducts> {
       ),
       body: _productList != null?StaggeredGridView.countBuilder(
           crossAxisCount: 2,
-          crossAxisSpacing: 12,
+          crossAxisSpacing: 5,
           mainAxisSpacing: 12,
           itemCount: _productList!.length,
           itemBuilder: (context, index){
@@ -61,6 +64,12 @@ class _SeeAllProductsState extends State<SeeAllProducts> {
       ),
     );
   }
+}
+String cutUnwantedPart(String name) {
+  if (name.length > 15) {
+    return name.trim().replaceRange(15, null, '...');
+  }
+  return name;
 }
 Widget _builderContainer(Data? data, BuildContext context){
   final productProvider = Provider.of<ProductProvider>(context);
@@ -76,10 +85,21 @@ Widget _builderContainer(Data? data, BuildContext context){
       ):productProvider.addItem(
           data.title!,
           data.imagePath!,
-          'N/A',
+          '500',
           data.description!,
           data.genre!
       );
+      final product = Product(
+          title:  data.title!,
+          imagePath: data.imagePath!,
+          price: data.pricelists!.isNotEmpty?
+          data.pricelists![0].price!:'500',
+          description: data.description!,
+          genre: data.genre!
+      );
+      Navigator.push(context, MaterialPageRoute(builder: (context){
+        return ProductDetails(details: product,);
+      }));
     },
     child: Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -87,7 +107,7 @@ Widget _builderContainer(Data? data, BuildContext context){
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: MediaQuery.of(context).size.width*0.35,
+            width: MediaQuery.of(context).size.width*0.5,
             height: MediaQuery.of(context).size.height*0.2,
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(14),
@@ -103,14 +123,14 @@ Widget _builderContainer(Data? data, BuildContext context){
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TextWidget(
-                  text: data.title!,
+                  text: cutUnwantedPart(data.title!),
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
                 ),
                 data.pricelists!.isNotEmpty?TextWidget(
                   text: "\$ ${formatNumberInDouble(data.pricelists?[0].price!)}",
                 ):const TextWidget(
-                  text: 'N/A',
+                  text: '500',
                 )
               ],
             ),

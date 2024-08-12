@@ -7,6 +7,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:zojatech_assignment/Screens/Product%20Service/home_page.dart';
+import 'package:zojatech_assignment/Screens/Transaction%20Service/transaction_history.dart';
 import 'package:zojatech_assignment/necessary%20widgets/icon_button_widget.dart';
 import 'package:zojatech_assignment/necessary%20widgets/text_widget.dart';
 import 'package:zojatech_assignment/class/cart_class.dart';
@@ -74,7 +75,11 @@ class _CartPageState extends State<CartPage> {
         ),
         actions: [
           IconButtonWidget(
-              onPressed:(){},
+              onPressed:(){
+                Navigator.push(context, MaterialPageRoute(builder: (context){
+                  return const TransactionHistory();
+                }));
+              },
               icon: Icon(Icons.history)
           )
         ],

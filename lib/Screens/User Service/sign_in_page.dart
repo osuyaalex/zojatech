@@ -3,10 +3,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:zojatech_assignment/Screens/User%20Service/signup_page.dart';
 import 'package:zojatech_assignment/Screens/User%20Service/widgets/sign_in_textfields.dart';
-
 import 'package:zojatech_assignment/Services/auth_service.dart';
 import 'package:zojatech_assignment/necessary%20widgets/spacing.dart';
-
 import '../../necessary widgets/elevated_button.dart';
 import '../../necessary widgets/text_widget.dart';
 import '../../utilities/snackbar.dart';

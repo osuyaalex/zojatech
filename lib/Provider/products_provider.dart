@@ -14,7 +14,7 @@ class ProductProvider extends ChangeNotifier {
 
   Future<void> loadProduct() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String>? savedItems = prefs.getStringList('cartItems');
+    List<String>? savedItems = prefs.getStringList('productItems');
 
     if (savedItems != null) {
       _list.clear();
@@ -27,7 +27,7 @@ class ProductProvider extends ChangeNotifier {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List<String> savedItems = _list.map((item) => jsonEncode(item.toJson())).toList();
 
-    await prefs.setStringList('cartItems', savedItems);
+    await prefs.setStringList('productItems', savedItems);
   }
 
   void addItem(
@@ -40,14 +40,10 @@ class ProductProvider extends ChangeNotifier {
     final existingIndex = _list.indexWhere((item) => item.title == name);
 
     if (existingIndex != -1) {
-      // Remove the existing item from its current position
       final existingItem = _list[existingIndex];
       _list.removeAt(existingIndex);
-
-      // Move the existing item to the top of the list
       _list.insert(0, existingItem);
     } else {
-      // Create a new item and add it to the top of the list
       final product = Product(
         title: name,
         imagePath: imageUrl,

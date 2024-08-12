@@ -6,6 +6,7 @@ import 'package:zojatech_assignment/Provider/cart_provider.dart';
 import 'package:zojatech_assignment/Provider/products_provider.dart';
 import 'package:zojatech_assignment/Screens/Product%20Service/product_details.dart';
 import 'package:zojatech_assignment/Screens/Product%20Service/see_all_products.dart';
+import 'package:zojatech_assignment/Screens/Product%20Service/see_all_tapped_products.dart';
 import 'package:zojatech_assignment/Services/get_firestore_data.dart';
 import 'package:zojatech_assignment/Services/product_services.dart';
 import 'package:zojatech_assignment/class/user_class.dart';
@@ -13,7 +14,10 @@ import 'package:zojatech_assignment/necessary%20widgets/text_widget.dart';
 
 import '../../Services/json/product_json.dart';
 import '../../class/product_class.dart';
+import '../../necessary widgets/icon_button_widget.dart';
 import '../../necessary widgets/spacing.dart';
+import '../Transaction Service/transaction_history.dart';
+import 'cart.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -29,7 +33,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
   List<Data>? _productList;
   late AnimationController _controller;
   Animation<int>? _animationInt;
-  final String _profilePlaceholder = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR5wt2-sE3VgB3SwwpeW9QWKNvvN3JqOFlUSQ&s";
 
 
 Future _getUserData()async{
@@ -83,8 +86,8 @@ Future _getUserData()async{
     );
     _getUserData();
     _getProductNumber();
-    Provider.of<ProductProvider>(context, listen: false).loadProduct();
     Provider.of<CartProvider>(context, listen: false).loadCart();
+    Provider.of<ProductProvider>(context, listen: false).loadProduct();
   }
 
   @override
@@ -124,26 +127,28 @@ Future _getUserData()async{
               children: [
                 Space(height:MediaQuery.of(context).size.height*0.07),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
-                      height: 35,
-                      width: 35,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(30),
-                          image: DecorationImage(
-                              image: NetworkImage(
-                                  _users?.image ?? _profilePlaceholder),
-                              fit: BoxFit.fill
-                          )
-                      ),
+                    IconButtonWidget(
+                        onPressed:(){
+                          Navigator.push(context, MaterialPageRoute(builder: (context){
+                            return const TransactionHistory();
+                          }));
+                        },
+                        icon: Icon(Icons.history, color: Colors.grey,)
                     ),
+                    IconButtonWidget(
+                        onPressed:(){
+                          Navigator.push(context, MaterialPageRoute(builder: (context){
+                            return const CartPage();
+                          }));
+                        }, icon: const Icon(Icons.shopping_cart, color: Colors.grey,)
+                    )
                   ],
                 ),
                 const Space(height:15),
                 TextWidget(
-                  text: 'Hello, ${_users?.firstName??''}',
+                  text: 'Hello, ${_users?.firstName??'Guest'}',
                   fontSize: 30,
                   fontWeight:  FontWeight.w800,
                 ),
@@ -183,7 +188,7 @@ Future _getUserData()async{
                 _productList != null?Padding(
                   padding: const EdgeInsets.only(top: 14.0),
                   child: SizedBox(
-                    height: MediaQuery.of(context).size.height*0.28,
+                    height: MediaQuery.of(context).size.height*0.25,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: 4,
@@ -208,7 +213,7 @@ Future _getUserData()async{
                     TextButton(
                         onPressed: (){
                           Navigator.push(context, MaterialPageRoute(builder: (context){
-                            return const SeeAllProducts();
+                            return const SeeAllTappedProduct();
                           }));
                         },
                         child: const TextWidget(
@@ -221,7 +226,7 @@ Future _getUserData()async{
                 Consumer<ProductProvider>(
                     builder: (context, productProvider, child){
                       int? itemCount = productProvider.count;
-                      int maxItemCount = 10;
+                      int maxItemCount = 3;
                       int? displayedItemCount = itemCount! < maxItemCount ? itemCount : maxItemCount;
                       return SingleChildScrollView(
                         child: Column(
@@ -295,8 +300,8 @@ Widget _builderContainer(Data? data, BuildContext context){
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: MediaQuery.of(context).size.width*0.75,
-            height: MediaQuery.of(context).size.height*0.2,
+            width: MediaQuery.of(context).size.width*0.7,
+            height: MediaQuery.of(context).size.height*0.18,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(14),
               image: DecorationImage(
